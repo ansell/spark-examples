@@ -10,6 +10,8 @@ Setup and run instructions for a basic Spark and Hadoop example
 
 # Setup
 
+Extract the hadoop and spark downloads to separate directories
+
 ## From Hadoop home directory:
 
 Source: [https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SingleCluster.html]
