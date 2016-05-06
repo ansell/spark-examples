@@ -56,6 +56,8 @@ Spark: [http://localhost:8080/]
 
 ## From current directory
 
+Spark self-contained application guide : [https://spark.apache.org/docs/latest/quick-start.html#self-contained-applications]
+
     mvn clean install
     SPARK_HOME/bin/spark-submit --class "SimpleHadoopApp" --master spark://YOUR_IP_ADDRESS:7077 target/simple-project-0.0.1-SNAPSHOT.jar
 
