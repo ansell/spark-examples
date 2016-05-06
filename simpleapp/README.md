@@ -37,7 +37,11 @@ Run:
     bin/hdfs dfs -mkdir /user/peter
     bin/hdfs dfs -put /path/to/test/file input
 
-## From the Spark home directory if you have a passphrase on your ssh key:
+## From the Spark home directory 
+
+    cp conf/slaves.example conf/slaves
+
+Add `localhost` to the bottom of conf/slaves
 
     SPARK_SSH_FOREGROUND=true sbin/start-all.sh 
 
