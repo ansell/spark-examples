@@ -2,10 +2,11 @@ Setup and run instructions for a basic Spark and Hadoop example
 
 # Dependencies
 
-* Maven-3
-* Java-8
-* Hadoop-2.6
-* Spark-1.6.1-for-Hadoop-2.6
+* Maven-3 : https://gist.github.com/ansell/3606df67ccd89bf9d2e7
+* Java-8 : https://gist.github.com/ansell/3606df67ccd89bf9d2e7
+* (Optional) Eclipse Mars for IDE : https://gist.github.com/ansell/3606df67ccd89bf9d2e7
+* Hadoop-2.6 : http://apache.uberglobalmirror.com/hadoop/common/hadoop-2.6.4/hadoop-2.6.4.tar.gz
+* Spark-1.6.1-for-Hadoop-2.6 : https://www.apache.org/dist/spark/spark-1.6.1/spark-1.6.1-bin-hadoop2.6.tgz
 
 # Setup
 
