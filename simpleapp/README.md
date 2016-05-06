@@ -29,6 +29,7 @@ HADOOP_HOME/etc/hadoop/hdfs-site.xml:
 
 Run:
 
+    bin/hdfs namenode -format # Only ever run this once
     sbin/start-dfs.sh 
     bin/hdfs dfs -put /path/to/test/file input
     sbin/stop-dfs.sh
