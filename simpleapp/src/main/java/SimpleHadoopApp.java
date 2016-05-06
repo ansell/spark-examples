@@ -1,6 +1,7 @@
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.storage.StorageLevel;
 
 /**
  * Demonstrates the basics of accessing hadoop files from spark.
@@ -18,6 +19,11 @@ public class SimpleHadoopApp {
 			long numBs = logData.filter(s -> s.contains("b")).count();
 			System.out.println(
 					"\n\n-------------------------------------\nLines with a: " + numAs + ", lines with b: " + numBs);
+			JavaRDD<Integer> lineLengths = logData.map(s -> s.length()).persist(StorageLevel.MEMORY_ONLY());
+			int totalLength = lineLengths.reduce((a, b) -> a + b);
+			System.out.println("Total length: " + totalLength);
+			long lineCount = lineLengths.count();
+			System.out.println("Total lines: " + lineCount);
 		}
 	}
 }
