@@ -21,9 +21,9 @@ public class SimpleHadoopApp {
 					"\n\n-------------------------------------\nLines with a: " + numAs + ", lines with b: " + numBs);
 			JavaRDD<Integer> lineLengths = logData.map(s -> s.length()).persist(StorageLevel.MEMORY_ONLY());
 			int totalLength = lineLengths.reduce((a, b) -> a + b);
-			System.out.println("Total length: " + totalLength);
+			System.out.println("\n\n-------------------------------------\nTotal length: " + totalLength);
 			long lineCount = lineLengths.count();
-			System.out.println("Total lines: " + lineCount);
+			System.out.println("\n\n-------------------------------------\nTotal lines: " + lineCount);
 		}
 	}
 }
