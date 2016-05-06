@@ -39,7 +39,7 @@ Run:
 
 ## From the Spark home directory 
 
-    cp conf/slaves.example conf/slaves
+    cp conf/slaves.template conf/slaves
 
 Add `localhost` to the bottom of conf/slaves
 
