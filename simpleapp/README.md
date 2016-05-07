@@ -10,6 +10,14 @@ Setup and run instructions for a basic Spark and Hadoop example
 
 # Setup
 
+Make sure the following works, and if not, make it work by adding key to ~/.ssh/authorized_keys:
+
+    ssh localhost
+
+May need to install openssh-server locally:
+
+    sudo apt-get install openssh-server
+
 Extract the hadoop and spark downloads to separate directories
 
 ## From Hadoop home directory:
@@ -17,6 +25,12 @@ Extract the hadoop and spark downloads to separate directories
 Source: [https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SingleCluster.html]
 
 Add the following lines to the hadoop configurations
+
+HADOOP_HOME/etc/hadoop/hadoop-env.sh:
+
+Set JAVA_HOME line if not set to:
+
+    export JAVA_HOME=/usr/lib/jvm/java-8-oracle 
 
 HADOOP_HOME/etc/hadoop/core-site.xml:
     
@@ -39,12 +53,15 @@ Run:
     bin/hdfs dfs -mkdir /user
     bin/hdfs dfs -mkdir /user/peter
     bin/hdfs dfs -put /path/to/test/file input
+    bin/hdfs dfs -cat input # To verify the put worked
 
 ## From the Spark home directory 
 
     cp conf/slaves.template conf/slaves
 
-Add `localhost` to the bottom of conf/slaves
+Add `localhost` to the bottom of conf/slaves if necessary
+
+Then run:
 
     SPARK_SSH_FOREGROUND=true sbin/start-all.sh 
 
