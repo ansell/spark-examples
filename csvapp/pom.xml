@@ -10,27 +10,35 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<akka.version>2.3.11</akka.version>
+		<scala-lib.version>2.10.6</scala-lib.version>
+		<json4s.version>3.3.0</json4s.version>
+		<slf4j.version>1.7.21</slf4j.version>
+		<spark.version>1.6.1</spark.version>
+		<jackson.version>2.7.3</jackson.version>
+		<old-jackson.version>1.9.13</old-jackson.version>
+		<tachyon.version>0.8.2</tachyon.version>
+		<parquet.version>1.8.1</parquet.version>
+		<hadoop.version>2.6.4</hadoop.version>
+		<avro.version>1.8.0</avro.version>
 	</properties>
 	<dependencies>
 		<dependency> <!-- Spark dependency -->
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_2.10</artifactId>
-			<version>1.6.1</version>
 		</dependency>
 		<dependency> <!-- Spark-CSV dependency -->
 			<groupId>com.databricks</groupId>
 			<artifactId>spark-csv_2.10</artifactId>
-			<version>1.4.0</version>
 		</dependency>
 		<dependency> <!-- Spark-CSV makes us add spark-sql ourselves -->
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-sql_2.10</artifactId>
-			<version>1.6.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-client</artifactId>
-			<version>2.6.4</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -48,4 +56,291 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+	<dependencyManagement>
+		<dependencies>
+			<dependency> <!-- Spark dependency -->
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-core_2.10</artifactId>
+				<version>${spark.version}</version>
+			</dependency>
+			<dependency> <!-- Spark-CSV dependency -->
+				<groupId>com.databricks</groupId>
+				<artifactId>spark-csv_2.10</artifactId>
+				<version>1.4.0</version>
+			</dependency>
+			<dependency> <!-- Spark-CSV makes us add spark-sql ourselves -->
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-sql_2.10</artifactId>
+				<version>${spark.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-client</artifactId>
+				<version>${hadoop.version}</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>commons-logging</artifactId>
+						<groupId>commons-logging</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.avro</groupId>
+				<artifactId>avro</artifactId>
+				<version>${avro.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-annotations</artifactId>
+				<version>${hadoop.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-common</artifactId>
+				<version>${hadoop.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-hdfs</artifactId>
+				<version>${hadoop.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-mapreduce-client-app</artifactId>
+				<version>${hadoop.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-yarn-api</artifactId>
+				<version>${hadoop.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-mapreduce-client-core</artifactId>
+				<version>${hadoop.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>
+					hadoop-mapreduce-client-jobclient
+				</artifactId>
+				<version>${hadoop.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-catalyst_2.10</artifactId>
+				<version>${spark.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.parquet</groupId>
+				<artifactId>parquet-column</artifactId>
+				<version>${parquet.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.parquet</groupId>
+				<artifactId>parquet-hadoop</artifactId>
+				<version>${parquet.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.parquet</groupId>
+				<artifactId>parquet-common</artifactId>
+				<version>${parquet.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.parquet</groupId>
+				<artifactId>parquet-encoding</artifactId>
+				<version>${parquet.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.parquet</groupId>
+				<artifactId>parquet-generator</artifactId>
+				<version>${parquet.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>1.5</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.parquet</groupId>
+				<artifactId>parquet-format</artifactId>
+				<version>2.3.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.parquet</groupId>
+				<artifactId>parquet-jackson</artifactId>
+				<version>${parquet.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.spark-project.spark</groupId>
+				<artifactId>unused</artifactId>
+				<version>1.0.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-unsafe_2.10</artifactId>
+				<version>1.6.1</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>14.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>2.4</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.4</version>
+			</dependency>
+			<dependency>
+				<groupId>org.tachyonproject</groupId>
+				<artifactId>tachyon-underfs-hdfs</artifactId>
+				<version>${tachyon.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.tachyonproject</groupId>
+				<artifactId>tachyon-underfs-s3</artifactId>
+				<version>${tachyon.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.tachyonproject</groupId>
+				<artifactId>tachyon-underfs-local</artifactId>
+				<version>${tachyon.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.typesafe.akka</groupId>
+				<artifactId>akka-slf4j_2.10</artifactId>
+				<version>${akka.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.dropwizard.metrics</groupId>
+				<artifactId>metrics-core</artifactId>
+				<version>3.1.2</version>
+			</dependency>
+			<dependency>
+				<groupId>com.typesafe.akka</groupId>
+				<artifactId>akka-remote_2.10</artifactId>
+				<version>${akka.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.typesafe.akka</groupId>
+				<artifactId>akka-actor_2.10</artifactId>
+				<version>${akka.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.typesafe</groupId>
+				<artifactId>config</artifactId>
+				<version>1.2.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.scala-lang</groupId>
+				<artifactId>scala-library</artifactId>
+				<version>${scala-lib.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.scala-lang</groupId>
+				<artifactId>scala-reflect</artifactId>
+				<version>${scala-lib.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.scala-lang</groupId>
+				<artifactId>scalap</artifactId>
+				<version>${scala-lib.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.scala-lang</groupId>
+				<artifactId>scala-compiler</artifactId>
+				<version>${scala-lib.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.json4s</groupId>
+				<artifactId>json4s-jackson_2.10</artifactId>
+				<version>${json4s.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.json4s</groupId>
+				<artifactId>json4s-core_2.10</artifactId>
+				<version>${json4s.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.avro</groupId>
+				<artifactId>avro-ipc</artifactId>
+				<version>${avro.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-core-asl</artifactId>
+				<version>${old-jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.xerial.snappy</groupId>
+				<artifactId>snappy-java</artifactId>
+				<version>1.1.2.4</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-launcher_2.10</artifactId>
+				<version>${spark.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-network-common_2.10</artifactId>
+				<version>${spark.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-network-shuffle_2.10</artifactId>
+				<version>${spark.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.htrace</groupId>
+				<artifactId>htrace-core</artifactId>
+				<version>3.0.4</version>
+			</dependency>
+			<dependency>
+				<groupId>org.json4s</groupId>
+				<artifactId>json4s-ast_2.10</artifactId>
+				<version>${json4s.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.module</groupId>
+				<artifactId>jackson-module-scala_2.10</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-mapper-asl</artifactId>
+				<version>${old-jackson.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>
