@@ -7,6 +7,7 @@ Setup and run instructions for a basic Spark and Hadoop example
 * (Optional) Eclipse Mars for IDE : https://gist.github.com/ansell/3606df67ccd89bf9d2e7
 * Hadoop-2.6 : http://apache.uberglobalmirror.com/hadoop/common/hadoop-2.6.4/hadoop-2.6.4.tar.gz
 * Spark-1.6.1-for-Hadoop-2.6 : https://www.apache.org/dist/spark/spark-1.6.1/spark-1.6.1-bin-hadoop2.6.tgz
+* Spark-CSV-1.4.0 : Managed by Maven
 
 # Setup
 
@@ -76,7 +77,7 @@ Spark: [http://localhost:8080/]
 Spark self-contained application guide : [https://spark.apache.org/docs/latest/quick-start.html#self-contained-applications]
 
     mvn clean install
-    SPARK_HOME/bin/spark-submit --class "SimpleHadoopApp" --master spark://YOUR_IP_ADDRESS:7077 --packages com.databricks:spark-csv_2.10:1.4.0 target/simple-project-0.0.1-SNAPSHOT.jar
+    SPARK_HOME/bin/spark-submit --master spark://peter-VirtualBox:7077 --class "CSVHadoopApp" --packages com.databricks:spark-csv_2.10:1.4.0 --verbose target/csv-project-0.0.1-SNAPSHOT.jar
 
 ## Cleanup after:
 
