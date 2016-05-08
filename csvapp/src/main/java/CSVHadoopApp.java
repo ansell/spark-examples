@@ -20,9 +20,10 @@ public class CSVHadoopApp {
             DataFrame df = sqlContext.read().format("com.databricks.spark.csv")
                     .option("inferSchema", "true").option("header", "true")
                     .load(hadoopURL + hadoopInputFile);
-
+            System.out.println("Successfully read input from: " + hadoopURL + hadoopInputFile);
             df.select("Field1", "Field2").write().format("com.databricks.spark.csv")
                     .option("header", "true").save(hadoopURL + hadoopOutputFile);
+            System.out.println("Successfully wrote output to: " + hadoopURL + hadoopOutputFile);
         }
     }
 }
