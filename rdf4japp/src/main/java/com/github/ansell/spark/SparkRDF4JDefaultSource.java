@@ -15,6 +15,7 @@ import org.apache.spark.sql.types.StructType;
 import org.eclipse.rdf4j.query.MalformedQueryException;
 import org.eclipse.rdf4j.query.QueryLanguage;
 import org.eclipse.rdf4j.query.parser.ParsedQuery;
+import org.eclipse.rdf4j.query.parser.ParsedTupleQuery;
 import org.eclipse.rdf4j.query.parser.QueryParserUtil;
 
 import scala.collection.JavaConversions;
@@ -41,6 +42,9 @@ public class SparkRDF4JDefaultSource implements RelationProvider, SchemaRelation
 			String query = Optional.ofNullable(parameters.get("query")).orElseThrow(() -> new RuntimeException(
 					"Spark RDF4J Sparql requires a 'query' to be specified in the parameters"));
 			ParsedQuery parsedQuery = QueryParserUtil.parseQuery(QueryLanguage.SPARQL, query, null);
+			if(!(parsedQuery instanceof ParsedTupleQuery)) {
+				throw new RuntimeException("Spark RDF4J can only be used with Tuple (Select) queries right now.");
+			}
 			return new SparkRDF4JSparqlRelation(service, parsedQuery, schema, sqlContext);
 		} catch (MalformedQueryException e) {
 			throw new RuntimeException("Query was not valid SPARQL", e);

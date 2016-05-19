@@ -3,14 +3,20 @@
  */
 package com.github.ansell.spark;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.spark.rdd.RDD;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.sources.BaseRelation;
 import org.apache.spark.sql.sources.TableScan;
+import org.apache.spark.sql.types.DataType;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 import org.eclipse.rdf4j.query.QueryLanguage;
 import org.eclipse.rdf4j.query.parser.ParsedOperation;
@@ -47,10 +53,13 @@ class SparkRDF4JSparqlRelation extends BaseRelation implements TableScan {
 		this.queryField = Objects.requireNonNull(parsedQuery);
 		this.schemaField = Optional.ofNullable(schema).orElseGet(() -> {
 			// These bindings are guaranteed to be present and are not nullable
-			this.queryField.getTupleExpr().getAssuredBindingNames();
+			Set<String> assuredBindingNames = this.queryField.getTupleExpr().getAssuredBindingNames();
 			// If bindings are only in the following they are nullable
-			this.queryField.getTupleExpr().getBindingNames();
-
+			StructType result = new StructType();
+			this.queryField.getTupleExpr().getBindingNames().forEach(binding -> {
+				result.add(binding, DataTypes.StringType, !(assuredBindingNames.contains(binding)));
+			});
+			return result;
 		});
 		this.sqlContextField = sqlContext;
 	}
