@@ -9,30 +9,22 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import org.apache.spark.Partition;
-import org.apache.spark.TaskContext;
-import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.rdd.RDD;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
-import org.apache.spark.sql.catalyst.CatalystTypeConverters;
+import org.apache.spark.sql.catalyst.expressions.GenericRow;
 import org.apache.spark.sql.sources.BaseRelation;
-import org.apache.spark.sql.sources.HadoopFsRelation;
 import org.apache.spark.sql.sources.TableScan;
-import org.apache.spark.sql.types.DataType;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
-import org.eclipse.rdf4j.query.QueryLanguage;
-import org.eclipse.rdf4j.query.parser.ParsedOperation;
+import org.eclipse.rdf4j.query.BindingSet;
 import org.eclipse.rdf4j.query.parser.ParsedQuery;
-import org.eclipse.rdf4j.query.parser.QueryParserUtil;
+import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
+import org.eclipse.rdf4j.repository.util.Repositories;
 
-import scala.collection.Iterator;
 import scala.collection.JavaConversions;
-import scala.collection.Seq;
-import scala.collection.mutable.Buffer;
 
 /**
  * 
@@ -77,12 +69,30 @@ class SparkRDF4JSparqlRelation extends BaseRelation implements TableScan {
 
 	@Override
 	public RDD<Row> buildScan() {
-		List<Row> rows = new ArrayList<>();
-		
-		
-		
-		JavaSparkContext sc = new JavaSparkContext(sqlContext().sparkContext());
-		return sc.parallelize(rows).rdd();
+		List<Row> rows = Repositories.tupleQuery(new SPARQLRepository(serviceField), queryField.getSourceString(),
+				tuple -> {
+					List<Row> result = new ArrayList<>();
+					while (tuple.hasNext()) {
+						result.add(convertTupleResultToRow(tuple.getBindingNames(), tuple.next(), this.schemaField));
+					}
+					return result;
+				});
+
+		try (JavaSparkContext sc = new JavaSparkContext(sqlContext().sparkContext());) {
+			return sc.parallelize(rows).rdd();
+		}
+	}
+
+	private static Row convertTupleResultToRow(List<String> bindingNames, BindingSet tuple, StructType schema) {
+		List<StructField> schemaAsList = JavaConversions.asJavaList(schema.toList());
+
+		String[] resultArray = new String[schemaAsList.size()];
+		for (int i = 0; i < schemaAsList.size(); i++) {
+			resultArray[i] = tuple.getBinding(schemaAsList.get(i).name()).getValue().stringValue();
+		}
+
+		org.apache.spark.sql.catalyst.expressions.GenericRow testGeneric = new GenericRow(resultArray);
+		return testGeneric;
 	}
 
 	@Override
