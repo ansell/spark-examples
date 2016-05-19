@@ -9,10 +9,16 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.spark.Partition;
+import org.apache.spark.TaskContext;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.rdd.RDD;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.catalyst.CatalystTypeConverters;
 import org.apache.spark.sql.sources.BaseRelation;
+import org.apache.spark.sql.sources.HadoopFsRelation;
 import org.apache.spark.sql.sources.TableScan;
 import org.apache.spark.sql.types.DataType;
 import org.apache.spark.sql.types.DataTypes;
@@ -22,6 +28,11 @@ import org.eclipse.rdf4j.query.QueryLanguage;
 import org.eclipse.rdf4j.query.parser.ParsedOperation;
 import org.eclipse.rdf4j.query.parser.ParsedQuery;
 import org.eclipse.rdf4j.query.parser.QueryParserUtil;
+
+import scala.collection.Iterator;
+import scala.collection.JavaConversions;
+import scala.collection.Seq;
+import scala.collection.mutable.Buffer;
 
 /**
  * 
@@ -66,8 +77,12 @@ class SparkRDF4JSparqlRelation extends BaseRelation implements TableScan {
 
 	@Override
 	public RDD<Row> buildScan() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Row> rows = new ArrayList<>();
+		
+		
+		
+		JavaSparkContext sc = new JavaSparkContext(sqlContext().sparkContext());
+		return sc.parallelize(rows).rdd();
 	}
 
 	@Override
