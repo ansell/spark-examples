@@ -41,7 +41,7 @@ import scala.collection.JavaConversions;
  * 
  * @author Peter Ansell p_ansell@yahoo.com
  */
-class SparkRDF4JSparqlRelation extends BaseRelation implements TableScan {
+public class SparkRDF4JSparqlRelation extends BaseRelation implements TableScan {
 
 	private SQLContext sqlContextField;
 	private String serviceField;
@@ -102,7 +102,7 @@ class SparkRDF4JSparqlRelation extends BaseRelation implements TableScan {
 		}
 	}
 
-	public static <T> T getModifiedToWorkWithVirtuoso(Repository repository,
+	private static <T> T getModifiedToWorkWithVirtuoso(Repository repository,
 			Function<RepositoryConnection, T> processFunction) throws RepositoryException {
 		RepositoryConnection conn = null;
 
@@ -117,7 +117,7 @@ class SparkRDF4JSparqlRelation extends BaseRelation implements TableScan {
 		}
 	}
 
-	public static <T> T tupleQueryModifiedToWorkWithVirtuoso(Repository repository, String query,
+	private static <T> T tupleQueryModifiedToWorkWithVirtuoso(Repository repository, String query,
 			Function<TupleQueryResult, T> processFunction) throws RepositoryException, UnknownTransactionStateException,
 			MalformedQueryException, QueryEvaluationException {
 		return getModifiedToWorkWithVirtuoso(repository, conn -> {
