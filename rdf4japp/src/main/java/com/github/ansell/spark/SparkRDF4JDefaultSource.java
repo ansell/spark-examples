@@ -32,7 +32,7 @@ public class SparkRDF4JDefaultSource implements RelationProvider, SchemaRelation
 	}
 
 	@Override
-	public BaseRelation createRelation(SQLContext sqlContext,
+	public SparkRDF4JSparqlRelation createRelation(SQLContext sqlContext,
 			scala.collection.immutable.Map<String, String> scalaParameters, StructType schema) {
 		Map<String, String> parameters = JavaConversions.asJavaMap(scalaParameters);
 		String service = Optional.ofNullable(parameters.get("service")).orElseThrow(() -> new RuntimeException(
@@ -53,7 +53,7 @@ public class SparkRDF4JDefaultSource implements RelationProvider, SchemaRelation
 	}
 
 	@Override
-	public BaseRelation createRelation(SQLContext sqlContext,
+	public SparkRDF4JSparqlRelation createRelation(SQLContext sqlContext,
 			scala.collection.immutable.Map<String, String> parameters) {
 		return createRelation(sqlContext, parameters, null);
 	}

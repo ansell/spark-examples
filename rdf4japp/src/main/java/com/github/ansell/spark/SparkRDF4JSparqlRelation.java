@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.rdd.RDD;
@@ -20,7 +21,16 @@ import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
+import org.eclipse.rdf4j.query.QueryLanguage;
+import org.eclipse.rdf4j.query.TupleQuery;
+import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.query.parser.ParsedQuery;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.UnknownTransactionStateException;
 import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
 import org.eclipse.rdf4j.repository.util.Repositories;
 
@@ -69,18 +79,53 @@ class SparkRDF4JSparqlRelation extends BaseRelation implements TableScan {
 
 	@Override
 	public RDD<Row> buildScan() {
-		List<Row> rows = Repositories.tupleQuery(new SPARQLRepository(serviceField), queryField.getSourceString(),
-				tuple -> {
-					List<Row> result = new ArrayList<>();
-					while (tuple.hasNext()) {
-						result.add(convertTupleResultToRow(tuple.getBindingNames(), tuple.next(), this.schemaField));
-					}
-					return result;
-				});
+		SPARQLRepository repository = new SPARQLRepository(serviceField);
+		try {
+			repository.initialize();
 
-		try (JavaSparkContext sc = new JavaSparkContext(sqlContext().sparkContext());) {
+			List<Row> rows = tupleQueryModifiedToWorkWithVirtuoso(repository, queryField.getSourceString(), tuple -> {
+				List<Row> result = new ArrayList<>();
+				while (tuple.hasNext()) {
+					result.add(convertTupleResultToRow(tuple.getBindingNames(), tuple.next(), this.schemaField));
+				}
+				return result;
+			});
+
+			// The unmapped spark context must be closed by the owner of this
+			// class when it isn't needed, this is just created to allow us to
+			// use the scala code in java
+			@SuppressWarnings("resource")
+			JavaSparkContext sc = new JavaSparkContext(sqlContext().sparkContext());
 			return sc.parallelize(rows).rdd();
+		} finally {
+			repository.shutDown();
 		}
+	}
+
+	public static <T> T getModifiedToWorkWithVirtuoso(Repository repository,
+			Function<RepositoryConnection, T> processFunction) throws RepositoryException {
+		RepositoryConnection conn = null;
+
+		try {
+			conn = repository.getConnection();
+			T result = processFunction.apply(conn);
+			return result;
+		} finally {
+			if (conn != null && conn.isOpen()) {
+				conn.close();
+			}
+		}
+	}
+
+	public static <T> T tupleQueryModifiedToWorkWithVirtuoso(Repository repository, String query,
+			Function<TupleQueryResult, T> processFunction) throws RepositoryException, UnknownTransactionStateException,
+			MalformedQueryException, QueryEvaluationException {
+		return getModifiedToWorkWithVirtuoso(repository, conn -> {
+			TupleQuery preparedQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, query);
+			try (TupleQueryResult queryResult = preparedQuery.evaluate();) {
+				return processFunction.apply(queryResult);
+			}
+		});
 	}
 
 	private static Row convertTupleResultToRow(List<String> bindingNames, BindingSet tuple, StructType schema) {
