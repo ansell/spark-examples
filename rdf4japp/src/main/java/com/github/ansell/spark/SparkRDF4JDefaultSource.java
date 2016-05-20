@@ -21,7 +21,7 @@ import org.eclipse.rdf4j.query.parser.QueryParserUtil;
 import scala.collection.JavaConversions;
 
 /**
- * 
+ * A source of information for Spark, using RDF4J SPARQL endpoints as sources.
  * 
  * @author Peter Ansell p_ansell@yahoo.com
  */

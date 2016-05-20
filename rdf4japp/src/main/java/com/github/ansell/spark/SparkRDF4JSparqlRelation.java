@@ -37,7 +37,16 @@ import org.eclipse.rdf4j.repository.util.Repositories;
 import scala.collection.JavaConversions;
 
 /**
+ * A method of accessing information for relations created by
+ * {@link SparkRDF4JDefaultSource}.
  * 
+ * This class is only public to expose both BaseRelation and TableScan together,
+ * as the Scala Spark code has no common ancester for these two.
+ * 
+ * Instances of this class should only be created using
+ * {@link SparkRDF4JDefaultSource#createRelation(SQLContext, scala.collection.immutable.Map)}
+ * or
+ * {@link SparkRDF4JDefaultSource#createRelation(SQLContext, scala.collection.immutable.Map, StructType)}.
  * 
  * @author Peter Ansell p_ansell@yahoo.com
  */
