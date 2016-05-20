@@ -18,6 +18,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import scala.collection.JavaConversions;
@@ -73,6 +74,7 @@ public class SparkRDF4JDefaultSourceTest {
 		assertEquals(100, myRDD.count());
 	}
 
+	@Ignore("TODO: Implement me")
 	@Test
 	public final void testCreateRelationSQLContextMapOfStringString() {
 		fail("Not yet implemented"); // TODO
